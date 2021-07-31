@@ -137,7 +137,7 @@ class IncomingMailAttachment
 
         $finfo = new finfo($fileinfo_const);
 
-        if (!($ftype = $finfo->buffer($this->getContents()))) {
+        if (!($ftype = $finfo->buffer(substr($this->getContents(),0,1024 * 1024)))) {
             $ftype = 'unknown';
         }
 
