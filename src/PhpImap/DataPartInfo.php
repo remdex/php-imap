@@ -99,6 +99,9 @@ class DataPartInfo
                 break;
             case ENCQUOTEDPRINTABLE:
                 $this->data = \quoted_printable_decode((string) $this->data);
+                if ($this->charset == 'UTF-8' && mb_check_encoding($this->data,'UTF-8') == false) {
+                    $this->data = mb_convert_encoding($this->data,'UTF-8','UTF-8');
+                }
                 break;
         }
 
