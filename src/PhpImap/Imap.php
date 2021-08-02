@@ -704,6 +704,10 @@ final class Imap
         if (!$result) {
             $lastError = \imap_last_error();
 
+            if ($lastError === false) {
+                throw new UnexpectedValueException('Could not open mailbox!', 0, self::HandleErrors(\imap_errors(), 'imap_open'));
+            }
+
             if ('' !== \trim($lastError)) {
                 throw new UnexpectedValueException('IMAP error:'.$lastError);
             }
