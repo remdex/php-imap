@@ -19,6 +19,10 @@ class DataPartInfo
     const TEXT_PLAIN = 0;
 
     const TEXT_HTML = 1;
+    
+    const DELIVERY_STATUS = 2;
+    
+    const RFC822 = 3;
 
     /**
      * @var int
