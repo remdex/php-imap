@@ -137,7 +137,11 @@ class IncomingMailAttachment
 
         $finfo = new finfo($fileinfo_const);
 
-        return $finfo->buffer($this->getContents());
+        if (!($ftype = $finfo->buffer(substr($this->getContents(),0,1024 * 1024)))) {
+            $ftype = 'unknown';
+        }
+
+        return $ftype;
     }
 
     /**
