@@ -422,6 +422,8 @@ class DataPartInfo
             'ansi-1251'=>'windows-1251',
         );
         
+        $this->charset = \trim($this->charset);
+
         if (isset($enc[$this->charset])) {
             $this->charset = $enc[$this->charset];
         }
@@ -433,7 +435,7 @@ class DataPartInfo
             $this->fixCharset();
             $this->data = $this->mail->decodeMimeStr(
                 (string) $this->data, // Data to convert
-                (string) \trim($this->charset) // Charset of mime part
+                $this->charset // Charset of mime part
             );
         }
 
