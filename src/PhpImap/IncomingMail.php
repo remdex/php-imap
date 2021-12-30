@@ -57,7 +57,13 @@ class IncomingMail extends IncomingMailHeader
         if ('textHtml' == $name) {
             $type = DataPartInfo::TEXT_HTML;
         }
-        if (('textPlain' === $name || 'textHtml' === $name) && isset($this->$name)) {
+        if ('deliveryStatus' == $name) {
+            $type = DataPartInfo::DELIVERY_STATUS;
+        }
+        if ('RFC822' == $name) {
+            $type = DataPartInfo::RFC822;
+        }
+        if (('textPlain' === $name || 'textHtml' === $name || $name == 'deliveryStatus' || $name == 'RFC822') && isset($this->$name)) {
             return (string) $this->$name;
         }
         if (false === $type) {
@@ -65,6 +71,9 @@ class IncomingMail extends IncomingMailHeader
         }
         if (!isset($this->$name)) {
             $this->$name = '';
+        }
+        if (!isset($this->dataInfo[$type])) {
+            return $this->$name = '';
         }
         foreach ($this->dataInfo[$type] as $data) {
             $this->$name .= \trim($data->fetch());

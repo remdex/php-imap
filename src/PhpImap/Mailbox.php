@@ -1733,7 +1733,13 @@ class Mailbox
                     $mail->addDataPartInfo($dataInfo, DataPartInfo::TEXT_HTML);
                 }
             } elseif (TYPEMESSAGE === $partStructure->type) {
-                $mail->addDataPartInfo($dataInfo, DataPartInfo::TEXT_PLAIN);
+                if ($partStructure->subtype === 'RFC822') {
+                    $mail->addDataPartInfo($dataInfo, DataPartInfo::RFC822);
+                } elseif ($partStructure->subtype === 'DELIVERY-STATUS') {
+                    $mail->addDataPartInfo($dataInfo, DataPartInfo::DELIVERY_STATUS);
+                } else {
+                    $mail->addDataPartInfo($dataInfo, DataPartInfo::TEXT_PLAIN);
+                }
             }
         }
     }
@@ -1783,7 +1789,7 @@ class Mailbox
     /**
      * @psalm-return array{0:string, 1:string|null}|null
      */
-    protected function possiblyGetEmailAndNameFromRecipient(object $recipient): ?array
+    public function possiblyGetEmailAndNameFromRecipient(object $recipient): ?array
     {
         if (isset($recipient->mailbox, $recipient->host)) {
             /** @var mixed */
