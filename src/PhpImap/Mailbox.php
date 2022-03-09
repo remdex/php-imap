@@ -1734,6 +1734,9 @@ class Mailbox
                 }
             } elseif (TYPEMESSAGE === $partStructure->type) {
                 if ($partStructure->subtype === 'RFC822') {
+                    if (isset($params['charset']) && !empty(\trim($params['charset']))) {
+                        $dataInfo->charset = $params['charset'];
+                    }
                     $mail->addDataPartInfo($dataInfo, DataPartInfo::RFC822);
                 } elseif ($partStructure->subtype === 'DELIVERY-STATUS') {
                     $mail->addDataPartInfo($dataInfo, DataPartInfo::DELIVERY_STATUS);
