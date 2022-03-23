@@ -1367,7 +1367,7 @@ class Mailbox
             $charset = \strtolower($element->charset);
 
             if ('default' === $charset) {
-                $charset = !empty($charsetPreferred) ? $charsetPreferred : $this->decodeMimeStrDefaultCharset;
+                $charset = !empty($charsetPreferred) ? strtolower($charsetPreferred) : $this->decodeMimeStrDefaultCharset;
             }
 
             switch ($charset) {
@@ -1377,7 +1377,7 @@ class Mailbox
                     break;
                 default:
                     // If charset exists in mb_list_encodings(), convert using mb_convert function
-                    if (\in_array($charset, $this->lowercase_mb_list_encodings())) {
+                    if (\in_array($charset, $this->lowercase_mb_list_encodings()) || $charset == 'gb2312') {
                         $newString .= \mb_convert_encoding($element->text, 'UTF-8', $charset);
                     } else {
                         // Fallback: Try to convert with iconv()
