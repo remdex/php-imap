@@ -62,6 +62,13 @@ class DataPartInfo
      */
     public $options;
 
+    /**
+     * @var bool
+     *
+     * @readonly
+     */
+    public $subPartOf = '';
+
     /** @var string|null */
     protected $data;
 
@@ -76,6 +83,11 @@ class DataPartInfo
         $this->part = $part;
         $this->encoding = $encoding;
         $this->options = $options;
+    }
+
+    public function setSubPartOf($isSubpart)
+    {
+        $this->subPartOf = $isSubpart;
     }
 
     public function fetch(): string

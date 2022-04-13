@@ -75,8 +75,15 @@ class IncomingMail extends IncomingMailHeader
         if (!isset($this->dataInfo[$type])) {
             return $this->$name = '';
         }
+
         foreach ($this->dataInfo[$type] as $data) {
-            $this->$name .= \trim($data->fetch());
+            // We are not interested in sub-parts of these types
+            // As in rare cases they break encodings
+            if ($type == DataPartInfo::TEXT_HTML || $type == DataPartInfo::TEXT_PLAIN) {
+                $this->$name .= $data->subPartOf != 'RFC822' ? \trim($data->fetch()) : '';
+            } else {
+                $this->$name .= \trim($data->fetch());
+            }
         }
 
         /** @var string */

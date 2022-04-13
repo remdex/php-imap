@@ -1200,13 +1200,17 @@ class Mailbox
             $flattenedParts[$prefix.$index] = $part;
 
             // We are not interested in RFC822 parts as we have single
-            if ($part->subtype == 'RFC822' && isset($part->parts)) {
-                unset($flattenedParts[$prefix.$index]->parts);
-            }
+
 
             if (isset($part->parts)) {
                 /** @var stdClass[] */
                 $part_parts = $part->parts;
+
+                if ($part->subtype == 'RFC822') {
+                    foreach ($part_parts as $part_rfc) {
+                        $part_rfc->subpart_of = 'RFC822';
+                    }
+                }
 
                 if (self::PART_TYPE_TWO == $part->type) {
                     /** @var array<string, stdClass> */
@@ -1272,7 +1276,11 @@ class Mailbox
     public function downloadAttachment(DataPartInfo $dataInfo, array $params, object $partStructure, bool $emlOrigin = false): IncomingMailAttachment
     {
         if ('RFC822' == $partStructure->subtype && isset($partStructure->disposition) && 'attachment' == $partStructure->disposition) {
-            $fileName = \strtolower($partStructure->subtype).'.eml';
+            if ((!isset($params['filename']) or empty(\trim($params['filename']))) && (!isset($params['name']) or empty(\trim($params['name'])))){
+                $fileName = \strtolower($partStructure->subtype).'.eml';
+            } else {
+                $fileName = (isset($params['filename']) and !empty(\trim($params['filename']))) ? $params['filename'] : $params['name'];
+            }
         } elseif ('ALTERNATIVE' == $partStructure->subtype) {
             $fileName = \strtolower($partStructure->subtype).'.eml';
         } elseif ((!isset($params['filename']) or empty(\trim($params['filename']))) && (!isset($params['name']) or empty(\trim($params['name'])))) {
@@ -1634,6 +1642,10 @@ class Mailbox
         }
         $dataInfo = new DataPartInfo($this, $mail->id, $partNum, $partStructure->encoding, $options);
 
+        if (isset($partStructure->subpart_of) && $partStructure->subpart_of == 'RFC822') {
+            $dataInfo->setSubPartOf('RFC822');
+        }
+
         /** @var array<string, string> */
         $params = [];
         if (!empty($partStructure->parameters)) {
@@ -1677,17 +1689,17 @@ class Mailbox
             $mail->setHasAttachments(true);
         }
 
+        // If it comes from an EML file it is an attachment
+        if ($emlParse) {
+            $isAttachment = true;
+        }
+
         // check if the part is a subpart of another attachment part (RFC822)
-        if ('RFC822' === $partStructure->subtype && isset($partStructure->disposition) && 'attachment' === $partStructure->disposition) {
+        if ($isAttachment == false && 'RFC822' === $partStructure->subtype && isset($partStructure->disposition) && 'attachment' === $partStructure->disposition) {
             // Although we are downloading each part separately, we are going to download the EML to a single file
             //incase someone wants to process or parse in another process
             $attachment = self::downloadAttachment($dataInfo, $params, $partStructure, false);
             $mail->addAttachment($attachment);
-        }
-
-        // If it comes from an EML file it is an attachment
-        if ($emlParse) {
-            $isAttachment = true;
         }
 
         // Do NOT parse attachments, when getAttachmentsIgnore() is true
