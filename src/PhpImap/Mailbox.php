@@ -1199,14 +1199,11 @@ class Mailbox
         foreach ($messageParts as $part) {
             $flattenedParts[$prefix.$index] = $part;
 
-            // We are not interested in RFC822 parts as we have single
-
-
             if (isset($part->parts)) {
                 /** @var stdClass[] */
                 $part_parts = $part->parts;
 
-                if ($part->subtype == 'RFC822') {
+                if ($part->subtype == 'RFC822' || (isset($part->subpart_of) && $part->subpart_of == 'RFC822')) {
                     foreach ($part_parts as $part_rfc) {
                         $part_rfc->subpart_of = 'RFC822';
                     }
