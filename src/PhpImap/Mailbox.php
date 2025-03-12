@@ -161,7 +161,7 @@ class Mailbox
     /**
      * @throws InvalidParameterException
      */
-    public function __construct(string $imapPath, string $login, string $password, string $attachmentsDir = null, string $serverEncoding = 'UTF-8')
+    public function __construct(string $imapPath, string $login, string $password, ?string $attachmentsDir = null, string $serverEncoding = 'UTF-8')
     {
         $this->imapPath = \trim($imapPath);
         $this->imapLogin = \trim($login);
@@ -347,7 +347,7 @@ class Mailbox
      *
      * @throws InvalidParameterException
      */
-    public function setConnectionArgs(int $options = 0, int $retriesNum = 0, array $params = null): void
+    public function setConnectionArgs(int $options = 0, int $retriesNum = 0, ?array $params = null): void
     {
         if (0 !== $options) {
             if (($options & self::IMAP_OPTIONS_SUPPORTED_VALUES) !== $options) {
@@ -966,7 +966,7 @@ class Mailbox
         int $criteria = SORTARRIVAL,
         bool $reverse = true,
         ? string $searchCriteria = 'ALL',
-        string $charset = null
+        ?string $charset = null
     ): array {
         return Imap::sort(
             $this->getImapStream(),
@@ -1364,7 +1364,7 @@ class Mailbox
      *
      * @todo update implementation pending resolution of https://github.com/vimeo/psalm/issues/2619 & https://github.com/vimeo/psalm/issues/2620
      */
-    public function decodeMimeStr(string $string, string $charsetPreferred = null): string
+    public function decodeMimeStr(string $string, ?string $charsetPreferred = null): string
     {
         $newString = '';
         /** @var list<object{charset?:string, text?:string}>|false */
@@ -1527,8 +1527,8 @@ class Mailbox
     public function appendMessageToMailbox(
         $message,
         string $mailbox = '',
-        string $options = null,
-        string $internal_date = null
+        ?string $options = null,
+        ?string $internal_date = null
     ): bool {
         if (
             \is_array($message) &&

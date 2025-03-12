@@ -76,8 +76,8 @@ final class Imap
         $imap_stream,
         string $mailbox,
         string $message,
-        string $options = null,
-        string $internal_date = null
+        ?string $options = null,
+        ?string $internal_date = null
     ): bool {
         \imap_errors(); // flush errors
 
@@ -817,7 +817,7 @@ final class Imap
         $imap_stream,
         string $criteria,
         int $options = SE_FREE,
-        string $charset = null,
+        ?string $charset = null,
         bool $encodeCriteriaAsUtf7Imap = false
     ): array {
         \imap_errors(); // flush errors
@@ -905,8 +905,8 @@ final class Imap
         int $criteria,
         bool $reverse,
         int $options,
-        string $search_criteria = null,
-        string $charset = null
+        ?string $search_criteria = null,
+        ?string $charset = null
     ): array {
         \imap_errors(); // flush errors
 
