@@ -904,7 +904,11 @@ class Mailbox
      * This fixed references and reply to <....outlook. com> where space occur.
      */
     public function cleanReferences($reference) {
-        return str_replace('><','> <',preg_replace('/<(.*?)(\s+)(.*?)>/','<\\1\\3>',$reference));
+        $cleaned = preg_replace('/<(.*?)(\s+)(.*?)>/','<\\1\\3>',$reference);
+        if ($cleaned === null) {
+            return $reference;
+        }
+        return str_replace('><','> <', $cleaned);
     }
 
     /**
