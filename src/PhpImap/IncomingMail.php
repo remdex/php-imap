@@ -40,6 +40,10 @@ class IncomingMail extends IncomingMailHeader
     /** @var string|null */
     private $textHtml;
 
+    private $deliveryStatus;
+
+    private $RFC822;
+
     /**
      * __get() is utilized for reading data from inaccessible (protected
      * or private) or non-existing properties.
